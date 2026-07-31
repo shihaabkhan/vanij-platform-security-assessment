@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — Vanij Platform</title>
+<style>
+
+  /* ============ TOKENS ============ */
+  :root{
+    --bg:#F5F6F8;
+    --surface:#FFFFFF;
+    --ink:#14181F;
+    --ink-soft:#4A5160;
+    --muted:#8A93A3;
+    --border:#E4E7EC;
+    --accent:#1F3A5F;
+    --accent-2:#2E5480;
+    --accent-soft:#EEF2F8;
+    --high:#B3261E;
+    --high-soft:#FBEDEC;
+    --radius-sm:6px;
+    --radius-md:10px;
+    --radius-lg:16px;
+    --shadow-sm:0 1px 2px rgba(20,24,31,0.05);
+    --shadow-md:0 10px 30px -12px rgba(20,24,31,0.12);
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    color:var(--ink-soft);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px;
+  }
+
+  .login-card{
+    width:100%;
+    max-width:400px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-md);
+    padding:40px 36px 36px;
+  }
+
+  .brand{display:flex; align-items:center; gap:12px; margin-bottom:28px;}
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px;
+    background:linear-gradient(155deg, var(--accent), var(--accent-2));
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:20px; height:20px;}
+  .brand-text{display:flex; flex-direction:column; line-height:1.2;}
+  .brand-text .name{font-weight:600; font-size:15px; color:var(--ink); letter-spacing:0.01em;}
+  .brand-text .sub{font-size:11.5px; color:var(--muted); letter-spacing:0.02em;}
+
+  h1{
+    margin:0 0 6px;
+    font-size:21px;
+    font-weight:600;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .lede{margin:0 0 26px; font-size:13.5px; color:var(--muted);}
+
+  .field{margin-bottom:16px;}
+  label{
+    display:block;
+    font-size:12px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:7px;
+  }
+  input{
+    width:100%;
+    font-family:var(--sans);
+    font-size:14.5px;
+    color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:11px 13px;
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input:focus{
+    outline:none;
+    border-color:var(--accent-2);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+
+  .btn{
+    width:100%;
+    margin-top:10px;
+    font-family:var(--sans); font-size:14px; font-weight:600; color:var(--surface);
+    background:var(--ink); border:none; padding:12px 16px; border-radius:7px;
+    cursor:pointer; transition:background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .btn:hover{background:var(--accent); box-shadow:var(--shadow-md); transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+
+  .error{
+    display:none;
+    margin:0 0 18px;
+    font-size:13px;
+    color:var(--high);
+    background:var(--high-soft);
+    border:1px solid rgba(179,38,30,0.18);
+    border-radius:var(--radius-sm);
+    padding:9px 12px;
+  }
+  .error.show{display:block;}
+
+  .foot{
+    margin:24px 0 0;
+    padding-top:18px;
+    border-top:1px solid var(--border);
+    font-size:11.5px;
+    color:var(--muted);
+    text-align:center;
+    letter-spacing:0.02em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition-duration:0.001ms !important;}
+  }
+
+</style>
+</head>
+<body>
+
+  <main class="login-card">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L4 5.5V11c0 5.5 3.4 9.7 8 11 4.6-1.3 8-5.5 8-11V5.5L12 2z" stroke="#FFFFFF" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M9 12.2l2 2 4-4.4" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="name">Vanij Platform</span>
+        <span class="sub">Security Assessment</span>
+      </div>
+    </div>
+
+    <h1>Sign in</h1>
+    <p class="lede">This report is confidential. Enter your credentials to continue.</p>
+
+    <p class="error" id="error" role="alert">Incorrect username or password.</p>
+
+    <form id="login-form" autocomplete="off">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" type="submit">Sign in</button>
+    </form>
+
+    <p class="foot">Authorized personnel only</p>
+  </main>
+
+<script>
+  /* ---- Single allowed account. Change these to update the credentials. ---- */
+  var USERNAME = "vanij_security_admin";
+  var PASSWORD = "vapt@vanij2026";
+
+  var form = document.getElementById("login-form");
+  var error = document.getElementById("error");
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var u = document.getElementById("username").value.trim();
+    var p = document.getElementById("password").value;
+
+    if (u === USERNAME && p === PASSWORD) {
+      sessionStorage.setItem("vanij_auth", "1");
+      window.location.replace("index.html");
+    } else {
+      error.classList.add("show");
+      document.getElementById("password").value = "";
+      document.getElementById("password").focus();
+    }
+  });
+
+  // Already signed in this session — skip the form.
+  if (sessionStorage.getItem("vanij_auth") === "1") {
+    window.location.replace("index.html");
+  }
+</script>
+
+</body>
+</html>
