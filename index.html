@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vanij Platform — Security Assessment Dashboard</title>
+<style>
+
+  /* ============ TOKENS ============ */
+  :root{
+    --bg:#F5F6F8;
+    --surface:#FFFFFF;
+    --surface-alt:#FAFBFC;
+    --ink:#14181F;
+    --ink-soft:#4A5160;
+    --muted:#8A93A3;
+    --border:#E4E7EC;
+    --line:#D8DCE3;
+    --accent:#1F3A5F;
+    --accent-2:#2E5480;
+    --accent-soft:#EEF2F8;
+    --high:#B3261E;
+    --high-soft:#FBEDEC;
+    --medium:#B4780A;
+    --medium-soft:#FBF3E4;
+    --low:#2F6F4E;
+    --low-soft:#EAF4EF;
+    --radius-sm:6px;
+    --radius-md:10px;
+    --radius-lg:16px;
+    --shadow-sm:0 1px 2px rgba(20,24,31,0.05);
+    --shadow-md:0 10px 30px -12px rgba(20,24,31,0.12);
+    --serif: "Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,"Times New Roman",serif;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono: ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink-soft);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+
+  /* ============ TOPBAR ============ */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    max-width:1180px; margin:0 auto; padding:0 32px;
+    height:72px; display:flex; align-items:center; justify-content:space-between;
+    gap:24px;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{
+    width:34px; height:34px; border-radius:8px;
+    background:linear-gradient(155deg, var(--accent), var(--accent-2));
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:18px; height:18px;}
+  .brand-text{display:flex; flex-direction:column; line-height:1.2;}
+  .brand-text .name{font-weight:600; font-size:15px; color:var(--ink); letter-spacing:0.01em;}
+  .brand-text .sub{font-size:11.5px; color:var(--muted); letter-spacing:0.02em;}
+
+  .topnav{display:flex; align-items:center; gap:2px;}
+  .topnav a{
+    font-size:13px; color:var(--ink-soft); text-decoration:none;
+    padding:8px 12px; border-radius:6px; font-weight:500;
+    transition:background 0.15s ease, color 0.15s ease;
+    white-space:nowrap;
+  }
+  .topnav a:hover{background:var(--accent-soft); color:var(--accent);}
+
+  .topbar-actions{display:flex; align-items:center; gap:10px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:11px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft);
+    padding:6px 11px; border-radius:100px;
+  }
+  .pill .dot{width:6px; height:6px; border-radius:50%; background:var(--accent);}
+  .btn{
+    font-family:var(--sans); font-size:13px; font-weight:600; color:var(--surface);
+    background:var(--ink); border:none; padding:9px 16px; border-radius:7px;
+    cursor:pointer; transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .btn:hover{background:var(--accent); box-shadow:var(--shadow-md); transform:translateY(-1px);}
+
+  .mobile-nav-toggle{display:none;}
+
+  /* ============ REVEAL ============ */
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity 0.7s cubic-bezier(.2,.7,.3,1), transform 0.7s cubic-bezier(.2,.7,.3,1);}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  .reveal-d1{transition-delay:0.06s;}
+  .reveal-d2{transition-delay:0.12s;}
+  .reveal-d3{transition-delay:0.18s;}
+  .reveal-d4{transition-delay:0.24s;}
+
+  /* ============ SECTION SCAFFOLD ============ */
+  section{padding:72px 0;}
+  section + section{border-top:1px solid var(--border);}
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin:0 0 14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--accent); display:inline-block;}
+  h2.section-title{
+    font-family:var(--serif); font-weight:600; font-size:32px; color:var(--ink);
+    margin:0 0 12px; letter-spacing:0.001em;
+  }
+  .section-lede{max-width:640px; color:var(--ink-soft); font-size:15.5px; margin:0 0 40px;}
+
+  /* ============ HERO ============ */
+  .hero{padding:76px 0 60px;}
+  .hero-top{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:48px; flex-wrap:wrap;
+  }
+  .hero-copy{max-width:620px;}
+  .hero-copy .eyebrow{margin-bottom:20px;}
+  .hero-title{
+    font-family:var(--serif); font-weight:600; font-size:44px; line-height:1.15;
+    color:var(--ink); margin:0 0 20px; letter-spacing:-0.01em;
+  }
+  .hero-desc{font-size:16px; color:var(--ink-soft); max-width:560px; margin:0;}
+
+  .hero-meta{
+    display:flex; flex-direction:column; gap:10px;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:20px 24px; min-width:250px; box-shadow:var(--shadow-sm);
+  }
+  .hero-meta-row{display:flex; justify-content:space-between; gap:20px; font-size:13px;}
+  .hero-meta-row .k{color:var(--muted);}
+  .hero-meta-row .v{color:var(--ink); font-weight:600; text-align:right;}
+
+  /* ============ STAT CARDS ============ */
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:48px;
+  }
+  .stat-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:24px 22px; box-shadow:var(--shadow-sm);
+    transition:box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .stat-card:hover{box-shadow:var(--shadow-md); transform:translateY(-2px);}
+  .stat-card .stat-num{
+    font-family:var(--serif); font-size:38px; font-weight:600; color:var(--ink); line-height:1;
+    margin-bottom:8px; letter-spacing:-0.01em;
+  }
+  .stat-card.high .stat-num{color:var(--high);}
+  .stat-card.medium .stat-num{color:var(--medium);}
+  .stat-card .stat-label{font-size:12.5px; color:var(--muted); font-weight:500;}
+  .stat-card .stat-bar{height:3px; border-radius:3px; background:var(--border); margin-top:14px; overflow:hidden;}
+  .stat-card .stat-bar span{display:block; height:100%; width:0%; background:var(--ink); border-radius:3px; transition:width 1.1s cubic-bezier(.2,.7,.3,1);}
+  .stat-card.high .stat-bar span{background:var(--high);}
+  .stat-card.medium .stat-bar span{background:var(--medium);}
+  .stat-card.zero .stat-bar span{background:var(--low);}
+
+  /* ============ SEVERITY LEDGER (signature element) ============ */
+  .ledger{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+    padding:36px 40px; box-shadow:var(--shadow-sm);
+  }
+  .ledger-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:10px;}
+  .ledger-head .total{font-family:var(--mono); font-size:12.5px; color:var(--muted);}
+  .ledger-head .total b{color:var(--ink); font-weight:700;}
+
+  .ledger-bar{
+    position:relative; height:34px; border-radius:4px; overflow:hidden;
+    display:flex; background:var(--surface-alt); border:1px solid var(--border);
+  }
+  .ledger-seg{height:100%; width:0%; transition:width 1.4s cubic-bezier(.16,.8,.2,1); position:relative;}
+  .ledger-seg.high{background:var(--high);}
+  .ledger-seg.medium{background:var(--medium);}
+  .ledger-seg.low{background:var(--low);}
+  .ledger-seg.info{background:var(--line);}
+
+  .ledger-ticks{
+    display:flex; justify-content:space-between; margin-top:6px; padding:0 1px;
+  }
+  .ledger-ticks span{
+    font-family:var(--mono); font-size:10px; color:var(--muted);
+    border-left:1px solid var(--line); padding-left:4px; flex:1;
+  }
+  .ledger-ticks span:first-child{border-left:none;}
+
+  .ledger-legend{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:30px;
+  }
+  .legend-item{display:flex; align-items:center; gap:10px;}
+  .legend-swatch{width:10px; height:10px; border-radius:3px; flex-shrink:0;}
+  .legend-swatch.high{background:var(--high);}
+  .legend-swatch.medium{background:var(--medium);}
+  .legend-swatch.low{background:var(--low);}
+  .legend-swatch.info{background:var(--line);}
+  .legend-text{display:flex; flex-direction:column;}
+  .legend-text .lbl{font-size:12.5px; font-weight:600; color:var(--ink);}
+  .legend-text .val{font-family:var(--mono); font-size:11.5px; color:var(--muted);}
+
+  /* ============ FINDINGS TABLE ============ */
+  .findings-list{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+    overflow:hidden; box-shadow:var(--shadow-sm);
+  }
+  .findings-row{
+    display:grid; grid-template-columns:56px 1fr 190px 130px; align-items:center;
+    gap:20px; padding:20px 26px; border-bottom:1px solid var(--border);
+    transition:background 0.15s ease;
+  }
+  .findings-row:hover{background:var(--surface-alt);}
+  .findings-row:last-child{border-bottom:none;}
+  .findings-row.head{
+    background:var(--surface-alt); font-size:11px; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--muted); font-weight:700; padding:14px 26px;
+  }
+  .f-id{font-family:var(--mono); font-size:12px; color:var(--muted); font-weight:600;}
+  .f-title{font-size:14.5px; color:var(--ink); font-weight:600;}
+  .f-desc{font-size:13px; color:var(--ink-soft); margin-top:3px; font-weight:400;}
+  .f-domain{font-size:12.5px; color:var(--ink-soft);}
+  .badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700;
+    padding:5px 11px; border-radius:100px; letter-spacing:0.01em; justify-self:start;
+  }
+  .badge::before{content:""; width:6px; height:6px; border-radius:50%;}
+  .badge.high{background:var(--high-soft); color:var(--high);}
+  .badge.high::before{background:var(--high);}
+  .badge.medium{background:var(--medium-soft); color:var(--medium);}
+  .badge.medium::before{background:var(--medium);}
+
+  /* ============ COVERAGE CARDS ============ */
+  .coverage-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .coverage-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:28px 26px; box-shadow:var(--shadow-sm); transition:box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .coverage-card:hover{box-shadow:var(--shadow-md); transform:translateY(-2px);}
+  .coverage-icon{
+    width:38px; height:38px; border-radius:9px; background:var(--accent-soft);
+    display:flex; align-items:center; justify-content:center; margin-bottom:18px;
+  }
+  .coverage-icon svg{width:19px; height:19px; stroke:var(--accent);}
+  .coverage-card h4{margin:0 0 8px; font-size:15.5px; color:var(--ink); font-weight:600;}
+  .coverage-card p{margin:0; font-size:13.5px; color:var(--ink-soft);}
+
+  /* ============ DOMAINS ============ */
+  .domain-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  .domain-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:24px 22px; position:relative; overflow:hidden;
+    box-shadow:var(--shadow-sm); transition:box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .domain-card:hover{box-shadow:var(--shadow-md); transform:translateY(-2px);}
+  .domain-count{
+    font-family:var(--serif); font-size:28px; font-weight:600; color:var(--ink); line-height:1;
+  }
+  .domain-count small{font-family:var(--mono); font-size:11px; color:var(--muted); font-weight:500; margin-left:6px;}
+  .domain-card h4{font-size:13.5px; font-weight:600; color:var(--ink); margin:12px 0 6px;}
+  .domain-card p{font-size:12.5px; color:var(--muted); margin:0; line-height:1.5;}
+  .domain-card .rail{position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent);}
+
+  /* ============ HIGHLIGHTS ============ */
+  .highlight-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+  .highlight-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:26px 24px; display:flex; gap:16px; box-shadow:var(--shadow-sm);
+  }
+  .highlight-icon{
+    width:34px; height:34px; border-radius:8px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .highlight-icon.pos{background:var(--low-soft);}
+  .highlight-icon.pos svg{stroke:var(--low);}
+  .highlight-icon.warn{background:var(--medium-soft);}
+  .highlight-icon.warn svg{stroke:var(--medium);}
+  .highlight-icon svg{width:17px; height:17px;}
+  .highlight-card p{margin:0; font-size:13.8px; color:var(--ink-soft);}
+  .highlight-card p b{color:var(--ink);}
+
+  /* ============ RECOMMENDATIONS ============ */
+  .rec-list{display:flex; flex-direction:column; gap:0; border-top:1px solid var(--border);}
+  .rec-item{
+    display:grid; grid-template-columns:64px 1fr; gap:24px; padding:26px 4px;
+    border-bottom:1px solid var(--border); align-items:flex-start;
+  }
+  .rec-num{font-family:var(--serif); font-size:26px; color:var(--line); font-weight:600;}
+  .rec-body h4{margin:0 0 6px; font-size:15px; color:var(--ink); font-weight:600;}
+  .rec-body p{margin:0; font-size:13.8px; color:var(--ink-soft); max-width:640px;}
+  .rec-priority{
+    display:inline-block; font-family:var(--mono); font-size:10.5px; text-transform:uppercase;
+    letter-spacing:0.05em; color:var(--accent); background:var(--accent-soft);
+    padding:3px 9px; border-radius:100px; margin-bottom:10px; font-weight:700;
+  }
+
+  /* ============ SUMMARY / FOOTER ============ */
+  .summary-panel{
+    background:var(--ink); color:#DDE2EA; border-radius:var(--radius-lg);
+    padding:48px 48px; position:relative; overflow:hidden;
+  }
+  .summary-panel::before{
+    content:""; position:absolute; right:-60px; top:-60px; width:220px; height:220px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
+  }
+  .summary-panel .eyebrow{color:#9BB0CE;}
+  .summary-panel .eyebrow::before{background:#9BB0CE;}
+  .summary-panel h3{
+    font-family:var(--serif); font-size:24px; color:#FFFFFF; margin:0 0 16px; font-weight:600;
+  }
+  .summary-panel p{color:#AEB7C6; font-size:14.5px; max-width:760px; margin:0 0 14px;}
+  .summary-panel p:last-child{margin-bottom:0;}
+
+  footer{padding:40px 0 60px; text-align:center;}
+  footer p{font-size:12px; color:var(--muted); margin:4px 0;}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:960px){
+    .stat-grid{grid-template-columns:repeat(2,1fr);}
+    .coverage-grid{grid-template-columns:repeat(2,1fr);}
+    .domain-grid{grid-template-columns:repeat(2,1fr);}
+    .highlight-grid{grid-template-columns:1fr;}
+    .ledger-legend{grid-template-columns:repeat(2,1fr);}
+    .topnav{display:none;}
+    .hero-title{font-size:34px;}
+    .findings-row{grid-template-columns:1fr; gap:6px;}
+    .findings-row.head{display:none;}
+    .f-domain{color:var(--muted); font-size:12px;}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 20px;}
+    .topbar-inner{padding:0 20px;}
+    .stat-grid{grid-template-columns:1fr 1fr;}
+    .coverage-grid{grid-template-columns:1fr;}
+    .domain-grid{grid-template-columns:1fr 1fr;}
+    .hero-meta{width:100%;}
+    .summary-panel{padding:32px 24px;}
+    .rec-item{grid-template-columns:1fr; gap:6px;}
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L4 5.5V11c0 5.5 3.4 9.7 8 11 4.6-1.3 8-5.5 8-11V5.5L12 2z" stroke="#FFFFFF" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M9 12.2l2 2 4-4.4" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="name">Vanij Platform</span>
+          <span class="sub">Security Assessment</span>
+        </div>
+      </div>
+      <nav class="topnav">
+        <a href="#overview">Overview</a>
+        <a href="#findings">Findings</a>
+        <a href="#coverage">Coverage</a>
+        <a href="#domains">Domains</a>
+        <a href="#highlights">Highlights</a>
+        <a href="#recommendations">Recommendations</a>
+        <a href="#summary">Summary</a>
+      </nav>
+      <div class="topbar-actions">
+        <span class="pill"><span class="dot"></span>Confidential</span>
+        <button class="btn" onclick="window.print()">Export PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HERO / OVERVIEW ============ -->
+  <section id="overview">
+    <div class="wrap hero">
+      <div class="hero-top">
+        <div class="hero-copy reveal in">
+          <div class="eyebrow">Security Assessment Overview</div>
+          <h1 class="hero-title">A focused, high-level view of platform security posture.</h1>
+          <p class="hero-desc">This assessment reviewed the Vanij Platform's web application, API gateway, and supporting backend services. Six findings were validated in total — one high severity and five medium severity — with no critical or low-severity issues identified. The pages that follow summarize the results for engineering and leadership review.</p>
+        </div>
+        <div class="hero-meta reveal in reveal-d1">
+          <div class="hero-meta-row"><span class="k">Scope</span><span class="v">3 platform components</span></div>
+          <div class="hero-meta-row"><span class="k">Findings validated</span><span class="v">6</span></div>
+          <div class="hero-meta-row"><span class="k">Critical findings</span><span class="v">0</span></div>
+          <div class="hero-meta-row"><span class="k">Report status</span><span class="v">Final</span></div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card reveal" data-count="6">
+          <div class="stat-num" data-target="6">0</div>
+          <div class="stat-label">Total findings</div>
+          <div class="stat-bar"><span data-fill="100"></span></div>
+        </div>
+        <div class="stat-card high reveal reveal-d1" data-count="1">
+          <div class="stat-num" data-target="1">0</div>
+          <div class="stat-label">High severity</div>
+          <div class="stat-bar"><span data-fill="17"></span></div>
+        </div>
+        <div class="stat-card medium reveal reveal-d2" data-count="5">
+          <div class="stat-num" data-target="5">0</div>
+          <div class="stat-label">Medium severity</div>
+          <div class="stat-bar"><span data-fill="83"></span></div>
+        </div>
+        <div class="stat-card zero reveal reveal-d3" data-count="0">
+          <div class="stat-num" data-target="0">0</div>
+          <div class="stat-label">Critical / Low severity</div>
+          <div class="stat-bar"><span data-fill="0"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SEVERITY DISTRIBUTION ============ -->
+  <section id="severity">
+    <div class="wrap">
+      <div class="eyebrow reveal">Severity Distribution</div>
+      <h2 class="section-title reveal">How findings break down by severity</h2>
+      <p class="section-lede reveal reveal-d1">All six validated findings, shown proportionally. The assessment surfaced no critical-severity issues.</p>
+
+      <div class="ledger reveal reveal-d2">
+        <div class="ledger-head">
+          <span class="total">TOTAL FINDINGS &nbsp;<b>6</b></span>
+          <span class="total">1 HIGH &nbsp;·&nbsp; 5 MEDIUM &nbsp;·&nbsp; 0 CRITICAL &nbsp;·&nbsp; 0 LOW</span>
+        </div>
+        <div class="ledger-bar" id="ledgerBar">
+          <div class="ledger-seg high" data-width="16.7"></div>
+          <div class="ledger-seg medium" data-width="83.3"></div>
+        </div>
+        <div class="ledger-ticks">
+          <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+        </div>
+        <div class="ledger-legend">
+          <div class="legend-item"><span class="legend-swatch high"></span><div class="legend-text"><span class="lbl">Critical</span><span class="val">0 findings · 0%</span></div></div>
+          <div class="legend-item"><span class="legend-swatch high"></span><div class="legend-text"><span class="lbl">High</span><span class="val">1 finding · 17%</span></div></div>
+          <div class="legend-item"><span class="legend-swatch medium"></span><div class="legend-text"><span class="lbl">Medium</span><span class="val">5 findings · 83%</span></div></div>
+          <div class="legend-item"><span class="legend-swatch info"></span><div class="legend-text"><span class="lbl">Low</span><span class="val">0 findings · 0%</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINDINGS SUMMARY ============ -->
+  <section id="findings">
+    <div class="wrap">
+      <div class="eyebrow reveal">Findings Summary</div>
+      <h2 class="section-title reveal">Validated findings, at a glance</h2>
+      <p class="section-lede reveal reveal-d1">Each finding below has been reviewed and confirmed. Technical detail and remediation steps are documented in the full assessment report.</p>
+
+      <div class="findings-list reveal reveal-d2">
+        <div class="findings-row head">
+          <span>ID</span><span>Finding</span><span>Security domain</span><span>Severity</span>
+        </div>
+        <div class="findings-row">
+          <span class="f-id">VAPT-01</span>
+          <span><span class="f-title">Host routing weakness exposing internal source materials</span><br><span class="f-desc">Request-handling gap in the platform's proxy layer that could expose internal build artifacts if unaddressed.</span></span>
+          <span class="f-domain">Network &amp; Infrastructure Security</span>
+          <span class="badge high">High</span>
+        </div>
+        <div class="findings-row">
+          <span class="f-id">VAPT-02</span>
+          <span><span class="f-title">Client-side enforcement of access controls</span><br><span class="f-desc">Some access-control decisions are enforced in the browser rather than validated on the server.</span></span>
+          <span class="f-domain">Authentication &amp; Access Control</span>
+          <span class="badge medium">Medium</span>
+        </div>
+        <div class="findings-row">
+          <span class="f-id">VAPT-03</span>
+          <span><span class="f-title">Missing protective HTTP security headers</span><br><span class="f-desc">The web application is missing standard browser-enforced protections present elsewhere on the platform.</span></span>
+          <span class="f-domain">Application Hardening &amp; Configuration</span>
+          <span class="badge medium">Medium</span>
+        </div>
+        <div class="findings-row">
+          <span class="f-id">VAPT-04</span>
+          <span><span class="f-title">Server and route information disclosure</span><br><span class="f-desc">Response details reveal more platform and routing information than necessary.</span></span>
+          <span class="f-domain">Information Disclosure &amp; Error Handling</span>
+          <span class="badge medium">Medium</span>
+        </div>
+        <div class="findings-row">
+          <span class="f-id">VAPT-05</span>
+          <span><span class="f-title">Inconsistent error handling on API requests</span><br><span class="f-desc">Unexpected requests surface generic server errors instead of a clean, handled response.</span></span>
+          <span class="f-domain">Information Disclosure &amp; Error Handling</span>
+          <span class="badge medium">Medium</span>
+        </div>
+        <div class="findings-row">
+          <span class="f-id">VAPT-06</span>
+          <span><span class="f-title">Unauthenticated exposure of backend health details</span><br><span class="f-desc">A monitoring endpoint discloses more backend infrastructure detail than intended, without authentication.</span></span>
+          <span class="f-domain">Information Disclosure &amp; Error Handling</span>
+          <span class="badge medium">Medium</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ASSESSMENT COVERAGE ============ -->
+  <section id="coverage">
+    <div class="wrap">
+      <div class="eyebrow reveal">Assessment Coverage</div>
+      <h2 class="section-title reveal">What was reviewed</h2>
+      <p class="section-lede reveal reveal-d1">The assessment covered the platform end-to-end — from the user-facing application through to backend infrastructure.</p>
+
+      <div class="coverage-grid">
+        <div class="coverage-card reveal">
+          <div class="coverage-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/><path d="M8 21h8"/></svg></div>
+          <h4>Web Application</h4>
+          <p>The customer-facing frontend, including how it responds to browser requests and enforces protective configuration.</p>
+        </div>
+        <div class="coverage-card reveal reveal-d1">
+          <div class="coverage-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 9-8 10-4.6-1-8-5-8-10V6l8-4z"/></svg></div>
+          <h4>API Gateway</h4>
+          <p>The gateway layer handling routing, authentication signals, and request/response behavior for platform services.</p>
+        </div>
+        <div class="coverage-card reveal reveal-d2">
+          <div class="coverage-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div>
+          <h4>Backend Services</h4>
+          <p>Supporting services behind the gateway, including data-handling logic and operational monitoring endpoints.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECURITY DOMAINS ============ -->
+  <section id="domains">
+    <div class="wrap">
+      <div class="eyebrow reveal">Security Domains Reviewed</div>
+      <h2 class="section-title reveal">Where findings concentrate</h2>
+      <p class="section-lede reveal reveal-d1">Findings map to four security domains, giving a clear picture of where to focus improvement work.</p>
+
+      <div class="domain-grid">
+        <div class="domain-card reveal">
+          <div class="rail"></div>
+          <div class="domain-count">1<small>/ 6 findings</small></div>
+          <h4>Network &amp; Infrastructure Security</h4>
+          <p>Proxy and request-routing behavior at the network edge.</p>
+        </div>
+        <div class="domain-card reveal reveal-d1">
+          <div class="rail"></div>
+          <div class="domain-count">1<small>/ 6 findings</small></div>
+          <h4>Authentication &amp; Access Control</h4>
+          <p>Where and how access-control decisions are enforced.</p>
+        </div>
+        <div class="domain-card reveal reveal-d2">
+          <div class="rail"></div>
+          <div class="domain-count">1<small>/ 6 findings</small></div>
+          <h4>Application Hardening &amp; Configuration</h4>
+          <p>Baseline protective configuration across services.</p>
+        </div>
+        <div class="domain-card reveal reveal-d3">
+          <div class="rail"></div>
+          <div class="domain-count">3<small>/ 6 findings</small></div>
+          <h4>Information Disclosure &amp; Error Handling</h4>
+          <p>How much detail responses and errors reveal to callers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KEY HIGHLIGHTS ============ -->
+  <section id="highlights">
+    <div class="wrap">
+      <div class="eyebrow reveal">Key Security Highlights</div>
+      <h2 class="section-title reveal">What stands out</h2>
+
+      <div class="highlight-grid">
+        <div class="highlight-card reveal">
+          <div class="highlight-icon pos"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <p><b>No critical-severity vulnerabilities were identified</b> across the reviewed platform components.</p>
+        </div>
+        <div class="highlight-card reveal reveal-d1">
+          <div class="highlight-icon warn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 18a2 2 0 001.8 3h15a2 2 0 001.8-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
+          <p><b>One high-severity finding was identified</b> and has a clear, low-effort remediation path already scoped.</p>
+        </div>
+        <div class="highlight-card reveal reveal-d2">
+          <div class="highlight-icon warn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 18a2 2 0 001.8 3h15a2 2 0 001.8-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
+          <p><b>A recurring theme was identified:</b> some authorization logic is enforced client-side rather than validated by the server.</p>
+        </div>
+        <div class="highlight-card reveal reveal-d3">
+          <div class="highlight-icon pos"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <p><b>Remaining findings are configuration-related</b> — inconsistent headers and error handling across services, each straightforward to standardize.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RECOMMENDATIONS ============ -->
+  <section id="recommendations">
+    <div class="wrap">
+      <div class="eyebrow reveal">High-Level Recommendations</div>
+      <h2 class="section-title reveal">Where to focus next</h2>
+
+      <div class="rec-list reveal reveal-d1">
+        <div class="rec-item">
+          <div class="rec-num">01</div>
+          <div class="rec-body">
+            <span class="rec-priority">Immediate priority</span>
+            <h4>Remediate the proxy request-handling weakness</h4>
+            <p>Address the single high-severity finding first — it carries the most direct risk of the six findings identified.</p>
+          </div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num">02</div>
+          <div class="rec-body">
+            <span class="rec-priority">Near term</span>
+            <h4>Move access-control enforcement fully to the server</h4>
+            <p>Ensure authorization and permission decisions are validated server-side, not only within client-side application code.</p>
+          </div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num">03</div>
+          <div class="rec-body">
+            <span class="rec-priority">Near term</span>
+            <h4>Standardize protective configuration across services</h4>
+            <p>Align security headers and error-handling behavior consistently across the web application, gateway, and backend services.</p>
+          </div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num">04</div>
+          <div class="rec-body">
+            <span class="rec-priority">Before next release</span>
+            <h4>Re-test affected components after remediation</h4>
+            <p>Confirm each finding is fully resolved with a targeted re-test prior to the next release cycle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ASSESSMENT SUMMARY ============ -->
+  <section id="summary">
+    <div class="wrap">
+      <div class="summary-panel reveal">
+        <div class="eyebrow">Assessment Summary</div>
+        <h3>A concentrated, addressable set of findings.</h3>
+        <p>This assessment validated six findings across the Vanij Platform — one high severity and five medium severity, with no critical or low-severity issues identified. The overall risk picture is driven primarily by a single proxy-routing weakness, alongside a consistent pattern of authorization logic that should be enforced server-side and configuration inconsistencies across services.</p>
+        <p>With the highest-priority item remediated and access-control and configuration standardization completed, the platform's security posture will be materially strengthened. A targeted re-test is recommended to confirm resolution ahead of the next release.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>Vanij Platform — Security Assessment Dashboard</p>
+      <p>Confidential · Prepared for internal engineering and leadership review</p>
+    </div>
+  </footer>
+
+<script>
+  // Reveal on scroll
+  (function(){
+    var items = document.querySelectorAll('.reveal');
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    items.forEach(function(el){ obs.observe(el); });
+  })();
+
+  // Count-up numbers + stat bars
+  (function(){
+    var cards = document.querySelectorAll('.stat-card');
+    var done = new WeakSet();
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting && !done.has(e.target)){
+          done.add(e.target);
+          var card = e.target;
+          var numEl = card.querySelector('.stat-num');
+          var target = parseInt(numEl.getAttribute('data-target'), 10);
+          var barEl = card.querySelector('.stat-bar span');
+          var fill = barEl.getAttribute('data-fill');
+          var start = null;
+          var duration = 900;
+          function step(ts){
+            if(!start) start = ts;
+            var progress = Math.min((ts - start) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            numEl.textContent = Math.round(eased * target);
+            if(progress < 1){ requestAnimationFrame(step); }
+            else { numEl.textContent = target; }
+          }
+          requestAnimationFrame(step);
+          requestAnimationFrame(function(){ barEl.style.width = fill + '%'; });
+        }
+      });
+    }, { threshold: 0.4 });
+    cards.forEach(function(c){ obs.observe(c); });
+  })();
+
+  // Ledger bar fill
+  (function(){
+    var bar = document.getElementById('ledgerBar');
+    if(!bar) return;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var segs = bar.querySelectorAll('.ledger-seg');
+          segs.forEach(function(s){
+            var w = s.getAttribute('data-width');
+            requestAnimationFrame(function(){ s.style.width = w + '%'; });
+          });
+          obs.unobserve(bar);
+        }
+      });
+    }, { threshold: 0.3 });
+    obs.observe(bar);
+  })();
+</script>
+
+</body>
+</html>
