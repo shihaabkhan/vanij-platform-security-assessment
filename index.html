@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vanij Platform — Security Assessment Dashboard</title>
+<script>
+  /* Gate the report behind login.html — runs before anything renders. */
+  if (sessionStorage.getItem("vanij_auth") !== "1") {
+    window.location.replace("login.html");
+  }
+</script>
 <style>
 
   /* ============ TOKENS ============ */
@@ -104,6 +110,11 @@
     cursor:pointer; transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
   .btn:hover{background:var(--accent); box-shadow:var(--shadow-md); transform:translateY(-1px);}
+  .btn-signout{
+    font-size:12px; font-weight:600; padding:7px 13px;
+    color:var(--ink-soft); background:transparent; border:1px solid var(--border);
+  }
+  .btn-signout:hover{color:var(--accent); background:var(--accent-soft); border-color:var(--accent-soft); box-shadow:none;}
 
   .mobile-nav-toggle{display:none;}
 
@@ -439,6 +450,7 @@
       </nav>
       <div class="topbar-actions">
         <span class="pill"><span class="dot"></span>Confidential</span>
+        <button class="btn btn-signout" id="signout" type="button">Sign out</button>
       </div>
     </div>
   </div>
@@ -811,6 +823,16 @@
   </footer>
 
 <script>
+  // Sign out
+  (function(){
+    var btn = document.getElementById('signout');
+    if(!btn) return;
+    btn.addEventListener('click', function(){
+      sessionStorage.removeItem('vanij_auth');
+      window.location.replace('login.html');
+    });
+  })();
+
   // Reveal on scroll
   (function(){
     var items = document.querySelectorAll('.reveal');
