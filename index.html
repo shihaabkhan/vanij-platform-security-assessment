@@ -310,6 +310,60 @@
     padding:3px 9px; border-radius:100px; margin-bottom:10px; font-weight:700;
   }
 
+  /* ============ METHODOLOGY: INFO CARD ============ */
+  .info-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+    padding:32px 36px; box-shadow:var(--shadow-sm);
+    display:grid; grid-template-columns:repeat(2,1fr); gap:14px 40px;
+  }
+  .info-card .hero-meta-row{border-bottom:1px solid var(--border); padding-bottom:10px;}
+
+  /* ============ METHODOLOGY: WORKFLOW FLOW ============ */
+  .flow-list{display:flex; flex-direction:column; align-items:stretch; gap:0;}
+  .flow-step{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:18px 22px; display:flex; align-items:center; gap:16px; box-shadow:var(--shadow-sm);
+    transition:box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .flow-step:hover{box-shadow:var(--shadow-md); transform:translateY(-2px);}
+  .flow-num{
+    font-family:var(--serif); font-size:20px; font-weight:600; color:var(--accent);
+    background:var(--accent-soft); width:38px; height:38px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .flow-body h4{margin:0 0 3px; font-size:14.5px; color:var(--ink); font-weight:600;}
+  .flow-body p{margin:0; font-size:12.5px; color:var(--muted);}
+  .flow-arrow{
+    display:flex; justify-content:center; padding:6px 0; color:var(--line);
+    font-family:var(--mono); font-size:14px;
+  }
+
+  /* ============ METHODOLOGY: TRIPLE-COLUMN TABLE VARIANT ============ */
+  .findings-row.triple{grid-template-columns:1fr 1.6fr 1.6fr;}
+  @media (max-width:960px){
+    .info-card{grid-template-columns:1fr;}
+    .findings-row.triple{grid-template-columns:1fr;}
+  }
+
+  /* ============ METHODOLOGY: CHECKLIST GRID ============ */
+  .checklist-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px 20px;}
+  .checklist-item{
+    display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:12px 14px;
+  }
+  .checklist-item svg{width:14px; height:14px; stroke:var(--low); flex-shrink:0;}
+  @media (max-width:960px){.checklist-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:640px){.checklist-grid{grid-template-columns:1fr;}}
+
+  /* ============ METHODOLOGY: LIMITATIONS NOTE ============ */
+  .note-card{
+    background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:22px 26px; display:flex; gap:16px; box-shadow:var(--shadow-sm);
+  }
+  .note-card p{margin:0 0 8px; font-size:13.5px; color:var(--ink-soft);}
+  .note-card p:last-child{margin-bottom:0;}
+
   /* ============ SUMMARY / FOOTER ============ */
   .summary-panel{
     background:var(--ink); color:#DDE2EA; border-radius:var(--radius-lg);
@@ -375,6 +429,7 @@
       </div>
       <nav class="topnav">
         <a href="#overview">Overview</a>
+        <a href="#methodology">Methodology</a>
         <a href="#findings">Findings</a>
         <a href="#coverage">Coverage</a>
         <a href="#domains">Domains</a>
@@ -395,36 +450,142 @@
         <div class="hero-copy reveal in">
           <div class="eyebrow">Security Assessment Overview</div>
           <h1 class="hero-title">A focused, high-level view of platform security posture.</h1>
-          <p class="hero-desc">This assessment reviewed the Vanij Platform's web application, API gateway, and supporting backend services. Six findings were validated in total — one high severity and five medium severity — with no critical or low-severity issues identified. The pages that follow summarize the results for engineering and leadership review.</p>
+          <p class="hero-desc">This assessment reviewed the Vanij Platform's web application, API gateway, and supporting backend services using Strix, an automated multi-agent security assessment tool. Four findings are currently open, all medium severity — two previously identified findings, including the sole high-severity issue, have since been remediated. The pages that follow summarize the results for engineering and leadership review.</p>
         </div>
         <div class="hero-meta reveal in reveal-d1">
           <div class="hero-meta-row"><span class="k">Scope</span><span class="v">3 platform components</span></div>
-          <div class="hero-meta-row"><span class="k">Findings validated</span><span class="v">6</span></div>
-          <div class="hero-meta-row"><span class="k">Critical findings</span><span class="v">0</span></div>
+          <div class="hero-meta-row"><span class="k">Open findings</span><span class="v">4</span></div>
+          <div class="hero-meta-row"><span class="k">Remediated findings</span><span class="v">2</span></div>
+          <div class="hero-meta-row"><span class="k">Critical / High findings</span><span class="v">0</span></div>
           <div class="hero-meta-row"><span class="k">Report status</span><span class="v">Final</span></div>
         </div>
       </div>
 
       <div class="stat-grid">
-        <div class="stat-card reveal" data-count="6">
-          <div class="stat-num" data-target="6">0</div>
-          <div class="stat-label">Total findings</div>
+        <div class="stat-card reveal" data-count="4">
+          <div class="stat-num" data-target="4">0</div>
+          <div class="stat-label">Open findings</div>
           <div class="stat-bar"><span data-fill="100"></span></div>
         </div>
-        <div class="stat-card high reveal reveal-d1" data-count="1">
-          <div class="stat-num" data-target="1">0</div>
-          <div class="stat-label">High severity</div>
-          <div class="stat-bar"><span data-fill="17"></span></div>
-        </div>
-        <div class="stat-card medium reveal reveal-d2" data-count="5">
-          <div class="stat-num" data-target="5">0</div>
-          <div class="stat-label">Medium severity</div>
-          <div class="stat-bar"><span data-fill="83"></span></div>
-        </div>
-        <div class="stat-card zero reveal reveal-d3" data-count="0">
+        <div class="stat-card high reveal reveal-d1" data-count="0">
           <div class="stat-num" data-target="0">0</div>
-          <div class="stat-label">Critical / Low severity</div>
+          <div class="stat-label">High severity</div>
           <div class="stat-bar"><span data-fill="0"></span></div>
+        </div>
+        <div class="stat-card medium reveal reveal-d2" data-count="4">
+          <div class="stat-num" data-target="4">0</div>
+          <div class="stat-label">Medium severity</div>
+          <div class="stat-bar"><span data-fill="100"></span></div>
+        </div>
+        <div class="stat-card zero reveal reveal-d3" data-count="2">
+          <div class="stat-num" data-target="2">0</div>
+          <div class="stat-label">Remediated findings</div>
+          <div class="stat-bar"><span data-fill="100"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ASSESSMENT METHODOLOGY ============ -->
+  <section id="methodology">
+    <div class="wrap">
+      <div class="eyebrow reveal">Assessment Methodology</div>
+      <h2 class="section-title reveal">How this assessment was run</h2>
+      <p class="section-lede reveal reveal-d1">Testing was performed with Strix, a multi-agent automated security assessment tool, running parallel specialist streams against the platform's externally reachable surfaces.</p>
+
+      <div class="info-card reveal reveal-d2">
+        <div class="hero-meta-row"><span class="k">Assessment Framework</span><span class="v">Strix — multi-agent automated security assessment</span></div>
+        <div class="hero-meta-row"><span class="k">Assessment Type</span><span class="v">AI-assisted, automated black-box</span></div>
+        <div class="hero-meta-row"><span class="k">Execution Model</span><span class="v">Multi-agent orchestration — 6 parallel streams</span></div>
+        <div class="hero-meta-row"><span class="k">Assessment Target</span><span class="v">Vanij Platform</span></div>
+        <div class="hero-meta-row"><span class="k">LLM used</span><span class="v">DeepSeek-V4-Pro</span></div>
+        <div class="hero-meta-row"><span class="k">Evidence Collection</span><span class="v">Automated capture of requests, responses &amp; PoCs</span></div>
+      </div>
+
+      <div style="height:48px;"></div>
+
+      <h3 style="font-family:var(--serif); font-size:20px; color:var(--ink); font-weight:600; margin:0 0 20px;">Assessment Workflow</h3>
+      <div class="flow-list reveal reveal-d3">
+        <div class="flow-step"><span class="flow-num">1</span><div class="flow-body"><h4>Reconnaissance</h4><p>Crawling, traffic analysis, technology fingerprinting</p></div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step"><span class="flow-num">2</span><div class="flow-body"><h4>API Surface Mapping</h4><p>Discovery of the API gateway and backend API</p></div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step"><span class="flow-num">3</span><div class="flow-body"><h4>Parallel Specialist Agents</h4><p>Six concurrent vulnerability-class testing streams</p></div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step"><span class="flow-num">4</span><div class="flow-body"><h4>Evidence Collection</h4><p>Requests, responses, and proof-of-concept capture</p></div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step"><span class="flow-num">5</span><div class="flow-body"><h4>Finding Correlation</h4><p>Consolidation of results across streams</p></div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step"><span class="flow-num">6</span><div class="flow-body"><h4>Risk Assessment</h4><p>Validation of findings against captured evidence</p></div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step"><span class="flow-num">7</span><div class="flow-body"><h4>Final Report Generation</h4><p>CVSS scoring, remediation guidance, PoC scripts</p></div></div>
+      </div>
+
+      <div style="height:48px;"></div>
+
+      <h3 style="font-family:var(--serif); font-size:20px; color:var(--ink); font-weight:600; margin:0 0 20px;">Specialist Testing Streams</h3>
+      <div class="findings-list reveal reveal-d4">
+        <div class="findings-row triple head">
+          <span>Stream</span><span>Primary Responsibility</span><span>Assessment Areas</span>
+        </div>
+        <div class="findings-row triple">
+          <span class="f-title">Authentication &amp; JWT</span>
+          <span class="f-domain">Token handling and authentication scheme strength</span>
+          <span class="f-domain">Session/token handling, custom encrypted auth scheme</span>
+        </div>
+        <div class="findings-row triple">
+          <span class="f-title">XSS &amp; Input Validation</span>
+          <span class="f-domain">Browser-enforced protections and input handling</span>
+          <span class="f-domain">Security headers, CSP configuration</span>
+        </div>
+        <div class="findings-row triple">
+          <span class="f-title">IDOR &amp; Authorization</span>
+          <span class="f-domain">Access-control enforcement between users and resources</span>
+          <span class="f-domain">Client-side filtering patterns, role/permission checks</span>
+        </div>
+        <div class="findings-row triple">
+          <span class="f-title">SSRF &amp; Network</span>
+          <span class="f-domain">Server-side request handling and host-based routing</span>
+          <span class="f-domain">Host header handling, internal service exposure</span>
+        </div>
+        <div class="findings-row triple">
+          <span class="f-title">Business Logic &amp; Race Conditions</span>
+          <span class="f-domain">Application logic and concurrency handling</span>
+          <span class="f-domain">Authorization patterns identified via source review</span>
+        </div>
+        <div class="findings-row triple">
+          <span class="f-title">SQL Injection</span>
+          <span class="f-domain">Input handling against injection attacks</span>
+          <span class="f-domain">Header-based, parameter-based, gateway-level injection</span>
+        </div>
+      </div>
+
+      <div style="height:48px;"></div>
+
+      <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:32px; align-items:start;">
+        <div>
+          <h3 style="font-family:var(--serif); font-size:20px; color:var(--ink); font-weight:600; margin:0 0 20px;">Categories Tested</h3>
+          <div class="checklist-grid reveal">
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Authentication mechanisms</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Authorization &amp; access control</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>API security</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>HTTP security headers</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Business logic</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Host-based routing</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Information disclosure</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Input validation (SQLi)</div>
+            <div class="checklist-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Technology fingerprinting</div>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-family:var(--serif); font-size:20px; color:var(--ink); font-weight:600; margin:0 0 20px;">Assessment Limitations</h3>
+          <div class="note-card reveal">
+            <div>
+              <p>The assessment was performed from an external black-box perspective.</p>
+              <p>The assessment scope was limited to the externally accessible components included in this engagement.</p>
+              <p>The findings documented in this report are based on the observed behavior and technical evidence collected during testing.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -435,24 +596,24 @@
     <div class="wrap">
       <div class="eyebrow reveal">Severity Distribution</div>
       <h2 class="section-title reveal">How findings break down by severity</h2>
-      <p class="section-lede reveal reveal-d1">All six validated findings, shown proportionally. The assessment surfaced no critical-severity issues.</p>
+      <p class="section-lede reveal reveal-d1">All four open validated findings, shown proportionally. No critical or high-severity issues remain open.</p>
 
       <div class="ledger reveal reveal-d2">
         <div class="ledger-head">
-          <span class="total">TOTAL FINDINGS &nbsp;<b>6</b></span>
-          <span class="total">1 HIGH &nbsp;·&nbsp; 5 MEDIUM &nbsp;·&nbsp; 0 CRITICAL &nbsp;·&nbsp; 0 LOW</span>
+          <span class="total">OPEN FINDINGS &nbsp;<b>4</b></span>
+          <span class="total">0 HIGH &nbsp;·&nbsp; 4 MEDIUM &nbsp;·&nbsp; 0 CRITICAL &nbsp;·&nbsp; 0 LOW</span>
         </div>
         <div class="ledger-bar" id="ledgerBar">
-          <div class="ledger-seg high" data-width="16.7"></div>
-          <div class="ledger-seg medium" data-width="83.3"></div>
+          <div class="ledger-seg high" data-width="0"></div>
+          <div class="ledger-seg medium" data-width="100"></div>
         </div>
         <div class="ledger-ticks">
           <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
         </div>
         <div class="ledger-legend">
           <div class="legend-item"><span class="legend-swatch high"></span><div class="legend-text"><span class="lbl">Critical</span><span class="val">0 findings · 0%</span></div></div>
-          <div class="legend-item"><span class="legend-swatch high"></span><div class="legend-text"><span class="lbl">High</span><span class="val">1 finding · 17%</span></div></div>
-          <div class="legend-item"><span class="legend-swatch medium"></span><div class="legend-text"><span class="lbl">Medium</span><span class="val">5 findings · 83%</span></div></div>
+          <div class="legend-item"><span class="legend-swatch high"></span><div class="legend-text"><span class="lbl">High</span><span class="val">0 findings · 0%</span></div></div>
+          <div class="legend-item"><span class="legend-swatch medium"></span><div class="legend-text"><span class="lbl">Medium</span><span class="val">4 findings · 100%</span></div></div>
           <div class="legend-item"><span class="legend-swatch info"></span><div class="legend-text"><span class="lbl">Low</span><span class="val">0 findings · 0%</span></div></div>
         </div>
       </div>
@@ -464,7 +625,7 @@
     <div class="wrap">
       <div class="eyebrow reveal">Findings Summary</div>
       <h2 class="section-title reveal">Validated findings, at a glance</h2>
-      <p class="section-lede reveal reveal-d1">Each finding below has been reviewed and confirmed. Technical detail and remediation steps are documented in the full assessment report.</p>
+      <p class="section-lede reveal reveal-d1">Each finding below has been reviewed and confirmed. Technical detail and remediation steps are documented in the full assessment report. Two previously identified findings — including the sole high-severity issue — have been remediated and are omitted below.</p>
 
       <div class="findings-list reveal reveal-d2">
         <div class="findings-row head">
@@ -472,36 +633,24 @@
         </div>
         <div class="findings-row">
           <span class="f-id">VAPT-01</span>
-          <span><span class="f-title">Host routing weakness exposing internal source materials</span><br><span class="f-desc">Request-handling gap in the platform's proxy layer that could expose internal build artifacts if unaddressed.</span></span>
-          <span class="f-domain">Network &amp; Infrastructure Security</span>
-          <span class="badge high">High</span>
-        </div>
-        <div class="findings-row">
-          <span class="f-id">VAPT-02</span>
           <span><span class="f-title">Client-side enforcement of access controls</span><br><span class="f-desc">Some access-control decisions are enforced in the browser rather than validated on the server.</span></span>
           <span class="f-domain">Authentication &amp; Access Control</span>
           <span class="badge medium">Medium</span>
         </div>
         <div class="findings-row">
-          <span class="f-id">VAPT-03</span>
-          <span><span class="f-title">Missing protective HTTP security headers</span><br><span class="f-desc">The web application is missing standard browser-enforced protections present elsewhere on the platform.</span></span>
-          <span class="f-domain">Application Hardening &amp; Configuration</span>
-          <span class="badge medium">Medium</span>
-        </div>
-        <div class="findings-row">
-          <span class="f-id">VAPT-04</span>
+          <span class="f-id">VAPT-02</span>
           <span><span class="f-title">Server and route information disclosure</span><br><span class="f-desc">Response details reveal more platform and routing information than necessary.</span></span>
           <span class="f-domain">Information Disclosure &amp; Error Handling</span>
           <span class="badge medium">Medium</span>
         </div>
         <div class="findings-row">
-          <span class="f-id">VAPT-05</span>
+          <span class="f-id">VAPT-03</span>
           <span><span class="f-title">Inconsistent error handling on API requests</span><br><span class="f-desc">Unexpected requests surface generic server errors instead of a clean, handled response.</span></span>
           <span class="f-domain">Information Disclosure &amp; Error Handling</span>
           <span class="badge medium">Medium</span>
         </div>
         <div class="findings-row">
-          <span class="f-id">VAPT-06</span>
+          <span class="f-id">VAPT-04</span>
           <span><span class="f-title">Unauthenticated exposure of backend health details</span><br><span class="f-desc">A monitoring endpoint discloses more backend infrastructure detail than intended, without authentication.</span></span>
           <span class="f-domain">Information Disclosure &amp; Error Handling</span>
           <span class="badge medium">Medium</span>
@@ -542,30 +691,30 @@
     <div class="wrap">
       <div class="eyebrow reveal">Security Domains Reviewed</div>
       <h2 class="section-title reveal">Where findings concentrate</h2>
-      <p class="section-lede reveal reveal-d1">Findings map to four security domains, giving a clear picture of where to focus improvement work.</p>
+      <p class="section-lede reveal reveal-d1">Findings map to four security domains. Two domains have no open findings following remediation.</p>
 
       <div class="domain-grid">
         <div class="domain-card reveal">
           <div class="rail"></div>
-          <div class="domain-count">1<small>/ 6 findings</small></div>
+          <div class="domain-count">0<small>/ 4 open</small></div>
           <h4>Network &amp; Infrastructure Security</h4>
-          <p>Proxy and request-routing behavior at the network edge.</p>
+          <p>Proxy and request-routing behavior at the network edge — remediated.</p>
         </div>
         <div class="domain-card reveal reveal-d1">
           <div class="rail"></div>
-          <div class="domain-count">1<small>/ 6 findings</small></div>
+          <div class="domain-count">1<small>/ 4 open</small></div>
           <h4>Authentication &amp; Access Control</h4>
           <p>Where and how access-control decisions are enforced.</p>
         </div>
         <div class="domain-card reveal reveal-d2">
           <div class="rail"></div>
-          <div class="domain-count">1<small>/ 6 findings</small></div>
+          <div class="domain-count">0<small>/ 4 open</small></div>
           <h4>Application Hardening &amp; Configuration</h4>
-          <p>Baseline protective configuration across services.</p>
+          <p>Baseline protective configuration across services — remediated.</p>
         </div>
         <div class="domain-card reveal reveal-d3">
           <div class="rail"></div>
-          <div class="domain-count">3<small>/ 6 findings</small></div>
+          <div class="domain-count">3<small>/ 4 open</small></div>
           <h4>Information Disclosure &amp; Error Handling</h4>
           <p>How much detail responses and errors reveal to callers.</p>
         </div>
@@ -582,19 +731,19 @@
       <div class="highlight-grid">
         <div class="highlight-card reveal">
           <div class="highlight-icon pos"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <p><b>No critical-severity vulnerabilities were identified</b> across the reviewed platform components.</p>
+          <p><b>No critical or high-severity vulnerabilities remain open</b> across the reviewed platform components.</p>
         </div>
         <div class="highlight-card reveal reveal-d1">
-          <div class="highlight-icon warn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 18a2 2 0 001.8 3h15a2 2 0 001.8-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
-          <p><b>One high-severity finding was identified</b> and has a clear, low-effort remediation path already scoped.</p>
+          <div class="highlight-icon pos"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <p><b>Two findings have been remediated</b> since this assessment, including the sole high-severity host-routing weakness.</p>
         </div>
         <div class="highlight-card reveal reveal-d2">
           <div class="highlight-icon warn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 18a2 2 0 001.8 3h15a2 2 0 001.8-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
-          <p><b>A recurring theme was identified:</b> some authorization logic is enforced client-side rather than validated by the server.</p>
+          <p><b>A recurring theme remains open:</b> some authorization logic is enforced client-side rather than validated by the server.</p>
         </div>
         <div class="highlight-card reveal reveal-d3">
           <div class="highlight-icon pos"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <p><b>Remaining findings are configuration-related</b> — inconsistent headers and error handling across services, each straightforward to standardize.</p>
+          <p><b>Remaining findings are information-disclosure related</b> — verbose error handling and infrastructure exposure, each straightforward to standardize.</p>
         </div>
       </div>
     </div>
@@ -649,8 +798,8 @@
       <div class="summary-panel reveal">
         <div class="eyebrow">Assessment Summary</div>
         <h3>A concentrated, addressable set of findings.</h3>
-        <p>This assessment validated six findings across the Vanij Platform — one high severity and five medium severity, with no critical or low-severity issues identified. The overall risk picture is driven primarily by a single proxy-routing weakness, alongside a consistent pattern of authorization logic that should be enforced server-side and configuration inconsistencies across services.</p>
-        <p>With the highest-priority item remediated and access-control and configuration standardization completed, the platform's security posture will be materially strengthened. A targeted re-test is recommended to confirm resolution ahead of the next release.</p>
+        <p>The assessment identified four Medium-severity findings within the current assessment scope. Addressing these findings will improve the overall security posture of the Vanij Platform</p>
+        <p>A follow-up assessment is recommended after remediation to confirm that the identified issues have been addressed.</p>
       </div>
     </div>
   </section>
